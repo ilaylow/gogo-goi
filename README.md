@@ -1,16 +1,10 @@
-# goi
+# Gogo-語彙
 
-A new Flutter project.
+A new Flutter project created to play around with flutter and create a useful app for Kanji vocabulary.
 
-## Getting Started
+## Next Few Ideas
 
-This project is a starting point for a Flutter application.
+- Notification system for a randomly selected word in the last selected user difficulty
+- Test interface for user to input フリガナ(furigana) reading of a Kanji.
+- Implement local database so app can keep track of which words user has been tested on (and got wrong, basic stat tracking etc.)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
