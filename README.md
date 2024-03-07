@@ -10,4 +10,4 @@ A new Flutter project created to play around with flutter and create a useful ap
 
 ## Current State
 
-![Current_State_8/3/2024](https://github.com/ilaylow/gogo-goi/assets/45478832/8920e9e7-52cb-4b21-9a5c-e6501c4ef68d)
+![Current State_8/3/2024](https://github.com/ilaylow/gogo-goi/assets/45478832/8920e9e7-52cb-4b21-9a5c-e6501c4ef68d)
