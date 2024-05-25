@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:goi/pages/kanji_practice.dart';
+import 'package:goi/pages/loading.dart';
 import 'package:goi/service/kanji.dart';
+import 'package:goi/service/db.dart';
+import 'package:goi/service/notification.dart';
+import 'package:goi/service/scheduler.dart';
 
 import 'models/word.dart';
 
-void main() {
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+void main() async {
   runApp(const MyApp());
+  NotificationService().init();
+  AlarmManager.initialize();
 }
 
 class MyApp extends StatelessWidget {
@@ -14,6 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Gogo語彙',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
@@ -34,6 +44,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final DatabaseHelper _dbHelper = DatabaseHelper();
+
   Word? _word;
   int level = 3;
 
@@ -50,6 +62,12 @@ class _MyHomePageState extends State<MyHomePage> {
       level = newLevel;
     });
     updateKanji();
+  }
+
+  @override
+  void initState(){
+    super.initState();
+    _dbHelper.initDatabase();
   }
 
   @override
@@ -105,13 +123,34 @@ class _MyHomePageState extends State<MyHomePage> {
         )
       ), // This trailing comma makes auto-formatting nicer for build methods.
       floatingActionButton: Padding(padding: const EdgeInsets.only(bottom: 30.0),
-        child: FloatingActionButton(
-          onPressed: updateKanji,
-          tooltip: 'New Kanji Button',
-          child: const Text(
-            '更新',
-            style: TextStyle(fontSize: 18.0), // Adjust the style as needed
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            FloatingActionButton(
+              heroTag: "newKanji",
+              onPressed: updateKanji,
+              tooltip: 'New Kanji Button',
+              child: const Text(
+                '更新',
+                style: TextStyle(fontSize: 18.0), // Adjust the style as needed
+              ),
+            ),
+            FloatingActionButton.extended(
+              heroTag: "newKanjiPage",
+              onPressed: () async {
+                if (!mounted) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => KanjiPracticeLoadingScreen()),
+                );
+              },
+              tooltip: 'Kanji Practice Button',
+              label: const Text(
+                '漢字練習',
+                style: TextStyle(fontSize: 16.0),// Adjust the style as needed
+              ),
+            )
+          ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
