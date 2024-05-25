@@ -2,6 +2,10 @@
 
 A new Flutter project created to play around with flutter and create a useful app for Kanji vocabulary for my own study.
 
+## Existing Design
+
+![Existing Design](https://github.com/ilaylow/gogo-goi/assets/45478832/3926b3d4-2fe4-4fea-aad7-89f404b0bf85)
+
 ## Next Few Ideas
 
 - Notification system for prompting the user for a random kanji question every hour or so. ✅
