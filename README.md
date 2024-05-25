@@ -1,13 +1,15 @@
 # Gogo-語彙
 
-A new Flutter project created to play around with flutter and create a useful app for Kanji vocabulary.
+A new Flutter project created to play around with flutter and create a useful app for Kanji vocabulary for my own study.
 
 ## Next Few Ideas
 
-- Notification system for a randomly selected word in the last selected user difficulty
-- Test interface for user to input フリガナ(furigana) reading of a Kanji.
-- Implement local database so app can keep track of which words user has been tested on (and got wrong, basic stat tracking etc.)
+- Notification system for prompting the user for a random kanji question every hour or so. ✅
+- Test interface for user to input フリガナ(furigana) reading of a Kanji. ✅
+- Implement database so app can keep track of which words user has been tested on (and got wrong, basic stat tracking etc.) ✅ (Kind of completed, but at the moment the app only interfaces with my own database)
 
 ## Current State
 
-![Current State 8/3/2024](https://github.com/ilaylow/gogo-goi/assets/45478832/8920e9e7-52cb-4b21-9a5c-e6501c4ef68d)
+![Current State 25/5/2024](https://github.com/ilaylow/gogo-goi/assets/45478832/a53d06fb-fdcc-4844-8642-09c46d21b048)
+![Current State 25/5/2024-practice-1](https://github.com/ilaylow/gogo-goi/assets/45478832/8ef51d7a-543b-4f52-97a6-1bf66c7395f4)
+![Current State 25/5/2024-practice-2](https://github.com/ilaylow/gogo-goi/assets/45478832/ae35cd2b-7129-431b-b862-2f4fb8ea1945)
