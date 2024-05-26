@@ -11,6 +11,9 @@ A new Flutter project created to play around with flutter and create a useful ap
 - Notification system for prompting the user for a random kanji question every hour or so. ✅
 - Test interface for user to input フリガナ(furigana) reading of a Kanji. ✅
 - Implement database so app can keep track of which words user has been tested on (and got wrong, basic stat tracking etc.) ✅ (Kind of completed, but at the moment the app only interfaces with my own database)
+- Get home page to show different decks of uploaded cards, categorized by date inserted.
+- Allow for searching of deck by date input.
+- Allow for settings toggle to be tested on words on a specific deck, before/after a specific date.
 
 ## Current State
 
