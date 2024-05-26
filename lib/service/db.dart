@@ -4,11 +4,11 @@ import 'package:goi/service/log.dart';
 import 'package:postgres/postgres.dart';
 
 class DatabaseHelper {
-  final String host = 'blank';
-  final int port = 1;
-  final String databaseName = 'blank';
-  final String username = 'blank';
-  final String password = 'blank';
+  final String host = '';
+  final int port = 0;
+  final String databaseName = '';
+  final String username = '';
+  final String password = '';
 
   PostgreSQLConnection? _connection;
   static final DatabaseHelper _instance = DatabaseHelper._internal();
