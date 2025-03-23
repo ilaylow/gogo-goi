@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:goi/pages/deck_practice.dart';
 import 'package:goi/pages/decks.dart';
-import 'package:goi/pages/kanji_practice.dart';
 import 'package:goi/pages/loading.dart';
 import 'package:goi/service/kanji.dart';
 import 'package:goi/service/db.dart';
-import 'package:goi/service/notification.dart';
-import 'package:goi/service/scheduler.dart';
 
 import 'models/word.dart';
 
@@ -14,8 +11,6 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   runApp(const MyApp());
-  NotificationService().init();
-  AlarmManager.initialize();
 }
 
 class MyApp extends StatelessWidget {

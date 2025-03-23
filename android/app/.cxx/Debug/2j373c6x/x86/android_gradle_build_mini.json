@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/chuenleylow/Bin/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/chuenleylow/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/chuenleylow/Git/gogo-goi/android/app/.cxx/Debug/2j373c6x/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/chuenleylow/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/chuenleylow/Git/gogo-goi/android/app/.cxx/Debug/2j373c6x/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}
