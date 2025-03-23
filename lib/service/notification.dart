@@ -52,8 +52,13 @@ class NotificationService {
 
   Future selectNotification(String? payload) async {
     // Handle navigation on tap
-    if (payload != null && navigatorKey.currentState != null) {
-      navigatorKey.currentState!.push(MaterialPageRoute(builder: (_) => KanjiPracticeLoadingScreen()));
+    if (payload != null) {
+      // Ensure app has initialized and navigatorKey is accessible
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (navigatorKey.currentState != null) {
+          navigatorKey.currentState!.push(MaterialPageRoute(builder: (_) => KanjiPracticeLoadingScreen()));
+        }
+      });
     }
   }
 

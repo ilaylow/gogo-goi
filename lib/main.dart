@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:goi/pages/deck_practice.dart';
+import 'package:goi/pages/decks.dart';
 import 'package:goi/pages/kanji_practice.dart';
 import 'package:goi/pages/loading.dart';
 import 'package:goi/service/kanji.dart';
@@ -123,8 +125,10 @@ class _MyHomePageState extends State<MyHomePage> {
         )
       ), // This trailing comma makes auto-formatting nicer for build methods.
       floatingActionButton: Padding(padding: const EdgeInsets.only(bottom: 30.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: Wrap(
+          direction: Axis.horizontal,
+          spacing: 15.0,
+          runSpacing: 15.0,
           children: <Widget>[
             FloatingActionButton(
               heroTag: "newKanji",
@@ -147,6 +151,37 @@ class _MyHomePageState extends State<MyHomePage> {
               tooltip: 'Kanji Practice Button',
               label: const Text(
                 '漢字練習',
+                style: TextStyle(fontSize: 16.0),// Adjust the style as needed
+              ),
+            ),
+            FloatingActionButton.extended(
+              heroTag: "currentDecksPage",
+              onPressed: () async {
+                if (!mounted) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Decks()),
+                );
+              },
+              tooltip: 'List Existing Decks',
+              label: const Text(
+                'デッキを見る',
+                style: TextStyle(fontSize: 16.0),// Adjust the style as needed
+              ),
+            ),
+            FloatingActionButton.extended(
+              heroTag: "practiceWrong",
+              onPressed: () async {
+                List<Map<String, dynamic>> words = await _dbHelper.fetchYesterdayIncorrect(DateTime.timestamp());
+                if (!mounted) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DeckPractice(words: words, deckName: "Incorrect Words")),
+                );
+              },
+              tooltip: 'Practice Wrong Answers',
+              label: const Text(
+                '間違った答え',
                 style: TextStyle(fontSize: 16.0),// Adjust the style as needed
               ),
             )

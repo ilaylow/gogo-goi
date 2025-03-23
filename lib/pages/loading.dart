@@ -23,7 +23,7 @@ class KanjiPracticeLoadingScreen extends StatelessWidget {
           } else {
             Map<String, dynamic>? kanjiRow = snapshot.data;
             if (kanjiRow != null) {
-              return KanjiPractice(kanjiRow: kanjiRow);
+              return KanjiPractice(kanjiRow: kanjiRow, onSubmitAnswer: () {}, partOfList: false, markCorrect: () {},);
             } else {
               return const Center(child: Text('Error: Database Returned no Rows!'));
             }

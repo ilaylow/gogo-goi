@@ -1,13 +1,17 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:goi/pages/loading.dart';
 
 import '../service/db.dart';
 
 class KanjiPractice extends StatefulWidget {
   final Map<String, dynamic> kanjiRow;
+  final bool partOfList;
+  final VoidCallback onSubmitAnswer;
+  final VoidCallback markCorrect;
 
-  const KanjiPractice({super.key, required this.kanjiRow});
+  const KanjiPractice({super.key, required this.kanjiRow, required this.onSubmitAnswer, required this.partOfList, required this.markCorrect});
 
   @override
   KanjiPracticeState createState() => KanjiPracticeState();
@@ -19,8 +23,9 @@ class KanjiPracticeState extends State<KanjiPractice> {
   bool _isSubmitting = false;
   bool? _isCorrect;
   bool displayMeaning = false;
+  bool displayNext = false;
+  bool displayRefresh = false;
   final DatabaseHelper db = DatabaseHelper();
-
 
   List<String>? _options;
   // int? _correctOptionIndex;
@@ -54,6 +59,13 @@ class KanjiPracticeState extends State<KanjiPractice> {
   //   });
   // }
 
+  void resetPractice() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => KanjiPracticeLoadingScreen()),
+    );
+  }
+
   void _handleSubmitAnswer() async {
     if (_isCorrect != null) {
       return;
@@ -74,6 +86,20 @@ class KanjiPracticeState extends State<KanjiPractice> {
       _isCorrect = answerIsCorrect;
       _isSubmitting = false;
     });
+
+    if (answerIsCorrect) {
+      widget.markCorrect();
+    }
+
+    if (widget.partOfList == true) {
+      setState(() {
+        displayNext = true;
+      });
+    } else {
+      displayRefresh = true;
+    }
+
+    displayMeaning = true;
   }
 
   Widget? showCorrectOrWrongIcon() {
@@ -168,7 +194,23 @@ class KanjiPracticeState extends State<KanjiPractice> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: showCorrectAnswer(),
-              )
+              ),
+              if (displayNext) Padding(padding: const EdgeInsets.symmetric(vertical: 30),
+              child: ElevatedButton(onPressed: widget.onSubmitAnswer,
+                style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                    textStyle: const TextStyle(fontSize: 20)
+                ),
+                child: const Text("次"),
+              )),
+              if (displayRefresh) Padding(padding: const EdgeInsets.symmetric(vertical: 30),
+                  child: ElevatedButton(onPressed: resetPractice,
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                        textStyle: const TextStyle(fontSize: 20)
+                    ),
+                    child: const Text("リフレッシュ"),
+                  )),
               // ...?_options?.asMap().entries.map((entry) {
               //   int idx = entry.key;
               //   String readingOption = entry.value;

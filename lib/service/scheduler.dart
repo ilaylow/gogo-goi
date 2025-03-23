@@ -21,23 +21,23 @@ class AlarmManager {
       const Duration(minutes: 60),
       0, // ID for this specific alarm
       fireNotification,
-      wakeup: true,
+      wakeup: false,
       exact: true,
       allowWhileIdle: true,
     );
   }
 
   static void fireNotification() async {
-    List<String> notificationMessages = ["漢字はどれくらいわかるかなぁ？", "漢字の勉強も忘れたか？", "真面目に漢字を勉強してください"];
+    List<String> notificationMessages = ["漢字の練習をしょう！", "漢字の勉強を忘れないで！", "漢字の読み方を復習しよう！"];
 
     logInfo("Sending notification!");
 
     DateTime now = DateTime.now();
     if (now.hour > 0 && now.hour < 9) {
-      logInfo("Not going to send notifications past 2am...");
+      logInfo("Not going to send notifications past 12am...");
     } else {
       int id = Random().nextInt(10000);
-      await NotificationService().showNotification(id, "Kanji Test", notificationMessages[Random().nextInt(2)], "dummy_payload");
+      await NotificationService().showNotification(id, "Kanji Test", notificationMessages[Random().nextInt(3)], "dummy_payload");
     }
   }
 }
