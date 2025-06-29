@@ -28,8 +28,6 @@ class KanjiPracticeState extends State<KanjiPractice> {
   final DatabaseHelper db = DatabaseHelper();
 
   List<String>? _options;
-  // int? _correctOptionIndex;
-  // int? _selectedOptionIndex;
 
 
   @override
@@ -175,7 +173,7 @@ class KanjiPracticeState extends State<KanjiPractice> {
                       labelText: '読み方',
                     ),
                   )),
-              const SizedBox(height: 20),
+              const SizedBox(height: 50),
               ElevatedButton(onPressed: _handleSubmitAnswer,
                 style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.fromLTRB(45, 15, 45, 15),

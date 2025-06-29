@@ -23,9 +23,40 @@ class DeckPracticeState extends State<DeckPractice> {
     return ListView.builder(
       itemCount: widget.words.length,
       itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(110, 2, 0, 0),
-          child: Text("${widget.words[index]['word']} - ${widget.words[index]['furigana']}", style: const TextStyle(fontSize: 20)),
+        final wordData = widget.words[index];
+        List<dynamic> commaMeaningsList = wordData['meaning'].split(',').map((word) => word.trim()).toList();
+        List<dynamic> semiColonMeaningsList = wordData['meaning'].split(';').map((word) => word.trim()).toList();
+        List<dynamic> meaningsList = (commaMeaningsList.length > semiColonMeaningsList.length) ? commaMeaningsList : semiColonMeaningsList;
+
+        String displayMeanings = meaningsList[0];
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(12),
+            leading: CircleAvatar(
+              backgroundColor: const Color(0xFFF63F74),
+              child: Text(
+                wordData['word'][0],
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+            title: Text(
+              wordData['word'],
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+            subtitle: Text(
+              wordData['furigana'],
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            trailing: Text(
+              displayMeanings,
+              style: const TextStyle(fontSize: 10, color: Colors.grey),
+            ),
+          ),
         );
       },
     );
@@ -118,6 +149,7 @@ class DeckPracticeState extends State<DeckPractice> {
               Expanded(
                   child: getWordList(),
               ),
+              SizedBox(height: 20),
               FloatingActionButton.extended(
                 heroTag: "beginPractice",
                 onPressed: beginPractice,
