@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:goi/pages/deck_practice.dart';
 import 'package:goi/pages/decks.dart';
 import 'package:goi/pages/loading.dart';
 import 'package:goi/service/kanji.dart';
 import 'package:goi/service/db.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'models/word.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+const pinkAccent = Color(0xFFFF5C8D);
+
 void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -22,9 +26,33 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: navigatorKey,
       title: 'Gogo語彙',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark().copyWith(
         useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        primaryColor: pinkAccent,
+        colorScheme: const ColorScheme.dark(
+          primary: pinkAccent,
+          secondary: pinkAccent,
+          background: Color(0xFF121212),
+          surface: Color(0xFF1E1E1E),
+          onPrimary: Colors.white,
+          onSecondary: Colors.white,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF1E1E1E),
+          elevation: 4,
+          foregroundColor: Colors.white,
+          titleTextStyle: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF2E2A2A),
+          ),
+        ),
+        textTheme: GoogleFonts.poppinsTextTheme().apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
+        ),
       ),
       home: const MyHomePage(title: '語彙'),
     );
@@ -82,108 +110,113 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(padding: const EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(onPressed: () {updateKanjiLevel(1);}, child: const Text("N1")),
-                ElevatedButton(onPressed: () {updateKanjiLevel(2);}, child: const Text("N2")),
-                ElevatedButton(onPressed: () {updateKanjiLevel(3);}, child: const Text("N3")),
-                ElevatedButton(onPressed: () {updateKanjiLevel(4);}, child: const Text("N4")),
-                ElevatedButton(onPressed: () {updateKanjiLevel(5);}, child: const Text("N5")),
-              ],
-            )),
-            Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      _word != null ? "${_word?.data.w}\n" : "ボータンを押してください",
-                      style: const TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold, height: 0.7),
-                    ),
-                    Text(
-                      _word != null ? "${_word?.data.r}\n" : "",
-                      style: _word?.data.w != "" ? const TextStyle(fontSize: 16.0) : const TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.only(left: 30.0, right: 30.0),
-                        child: Text(_word != null ? "${_word?.data.def}\n" : "",
-                          softWrap: true,
-                          style: const TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold),
-                        )
-                    ),
-                    const SizedBox(height: 90),
-                  ],
-                ),
-            )
-          ]
-        )
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-      floatingActionButton: Padding(padding: const EdgeInsets.only(bottom: 30.0),
-        child: Wrap(
-          direction: Axis.horizontal,
-          spacing: 15.0,
-          runSpacing: 15.0,
-          children: <Widget>[
-            FloatingActionButton(
-              heroTag: "newKanji",
-              onPressed: updateKanji,
-              tooltip: 'New Kanji Button',
-              child: const Text(
-                '更新',
-                style: TextStyle(fontSize: 18.0), // Adjust the style as needed
+            Text(
+              '語語語彙',
+              style: GoogleFonts.poppins(
+                fontSize: 45,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF636262),
               ),
             ),
-            FloatingActionButton.extended(
-              heroTag: "newKanjiPage",
+            Transform.translate(
+              offset: const Offset(0, -3), // 👈 moves the title up by 40 pixels
+              child: Text(
+                'Go   Go     Goi',
+                style: GoogleFonts.rubik(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w300,
+                  color: const Color(0xFF636262),
+                ),
+              ),
+            ),
+            const SizedBox(height: 80),
+            SizedBox(
+              width: 200, // set your desired width
+              child: _PinkButton(title: '漢字練習', icon: Icons.star,
               onPressed: () async {
                 if (!mounted) return;
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => KanjiPracticeLoadingScreen()),
                 );
-              },
-              tooltip: 'Kanji Practice Button',
-              label: const Text(
-                '漢字練習',
-                style: TextStyle(fontSize: 16.0),// Adjust the style as needed
-              ),
+              }),
             ),
-            FloatingActionButton.extended(
-              heroTag: "currentDecksPage",
+            const SizedBox(height: 80),
+            SizedBox(
+              width: 200,
+              child: _PinkButton(title: '言葉デッキ', icon: Icons.receipt_long,
               onPressed: () async {
                 if (!mounted) return;
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Decks()),
+                  MaterialPageRoute(builder: (context) => Decks()),
                 );
-              },
-              tooltip: 'List Existing Decks',
-              label: const Text(
-                'デッキを見る',
-                style: TextStyle(fontSize: 16.0),// Adjust the style as needed
-              ),
+              }),
             ),
-            FloatingActionButton.extended(
-              heroTag: "practiceWrong",
+            const SizedBox(height: 80),
+            SizedBox(
+              width: 200,
+              child: _PinkButton(title: '間違い復習', icon: Icons.flag,
               onPressed: () async {
-                List<Map<String, dynamic>> words = await _dbHelper.fetchYesterdayIncorrect(DateTime.timestamp());
-                if (!mounted) return;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DeckPractice(words: words, deckName: "Incorrect Words")),
-                );
-              },
-              tooltip: 'Practice Wrong Answers',
-              label: const Text(
-                '間違った答え',
-                style: TextStyle(fontSize: 16.0),// Adjust the style as needed
-              ),
+                return;
+              }),
             )
-          ],
-        ),
+          ]
+        )
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      //       FloatingActionButton.extended(
+      //         heroTag: "practiceWrong",
+      //         onPressed: () async {
+      //           List<Map<String, dynamic>> words = await _dbHelper.fetchYesterdayIncorrect(DateTime.timestamp());
+      //           if (!mounted) return;
+      //           Navigator.push(
+      //             context,
+      //             MaterialPageRoute(builder: (context) => DeckPractice(words: words, deckName: "Incorrect Words")),
+      //           );
+      //         },
+      //         tooltip: 'Practice Wrong Answers',
+      //         label: const Text(
+      //           '間違った答え',
+      //           style: TextStyle(fontSize: 16.0),// Adjust the style as needed
+      //         ),
+      //       )
+      //     ],
+      //   ),
+      // ),
+    );
+  }
+}
+
+class _PinkButton extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const _PinkButton({
+    required this.title,
+    required this.icon,
+    required this.onPressed
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    const buttonColor = Color(0xFF3E3D3D);
+
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, color: pinkAccent, size: 22),
+      label: Text(title),
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        backgroundColor: buttonColor,
+        foregroundColor: Colors.white,
+        elevation: 6,
+        shadowColor: pinkAccent.withOpacity(0.4),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+      ),
     );
   }
 }

@@ -2,13 +2,14 @@ import 'dart:math';
 
 import 'package:goi/service/log.dart';
 import 'package:postgres/postgres.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DatabaseHelper {
-  final String host = '';
-  final int port = 26257;
-  final String databaseName = '';
-  final String username = 'ley';
-  final String password = '';
+  final String host = dotenv.env["DB_HOST"]!;
+  final int port = int.parse(dotenv.env["DB_PORT"]!);
+  final String databaseName = dotenv.env["DB_NAME"]!;
+  final String username = dotenv.env["DB_USERNAME"]!;
+  final String password = dotenv.env["DB_PASSWORD"]!;
 
   PostgreSQLConnection? _connection;
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -28,7 +29,7 @@ class DatabaseHelper {
   Future<List<String>> fetchCurrentDecks() async {
     await restartOrOpenConnection();
 
-    // Assume page size is 10 for now, implement pagination afterwards...
+    // Assume page size is 100 for now, implement pagination afterwards...
     var result = await _connection!.query('''
       SELECT deckName
       FROM deck

@@ -38,6 +38,9 @@ dependencies:
 
   postgres: ^2.4.0
 
+  google_fonts: ^6.1.0
+  flutter_dotenv: ^5.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -93,3 +96,4 @@ flutter:
 
   assets:
     - assets/
+    - .env
