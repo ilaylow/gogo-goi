@@ -177,6 +177,7 @@ class DatabaseHelper {
   }
 
   Future<List<List<String>>> getDeckHistory() async {
+    await restartOrOpenConnection();
     var result = await _connection!.query('''
         SELECT d.deckname, ds.attempttime, ds.userscore FROM deckscore ds
         INNER JOIN deck d ON ds.deckid = d.deckid
