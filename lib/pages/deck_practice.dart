@@ -1,13 +1,18 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:goi/pages/kanji_practice.dart';
 
+import 'package:goi/service/db.dart';
+
 class DeckPractice extends StatefulWidget {
   final List<Map<String, dynamic>> words;
   final String deckName;
+  final String deckId;
 
-  const DeckPractice({super.key, required this.words, required this.deckName});
+  const DeckPractice({super.key, required this.words, required this.deckName, required this.deckId});
 
   @override
   State<StatefulWidget> createState() => DeckPracticeState();
@@ -96,7 +101,11 @@ class DeckPracticeState extends State<DeckPractice> {
 
   @override
   Widget build(BuildContext context) {
+    DatabaseHelper db = DatabaseHelper();
+
     if (showResult) {
+      double score = 100 * (numCorrect / widget.words.length);
+      db.insertUserDeckScore(widget.deckId, score);
       return Scaffold(
           appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.primary,
