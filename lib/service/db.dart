@@ -26,7 +26,7 @@ class DatabaseHelper {
     logInfo("Connection established successfully!");
   }
 
-  Future<Map<String,String>> fetchCurrentDecks() async {
+  Future<Map<String,String>> fetchCurrentDecks(int offset, int pageSize) async {
     await restartOrOpenConnection();
 
     // Assume page size is 100 for now, implement pagination afterwards...
@@ -34,7 +34,7 @@ class DatabaseHelper {
       SELECT deckId, deckName
       FROM deck
       ORDER BY deckName DESC
-      LIMIT 100
+      LIMIT $pageSize OFFSET $offset
     ''');
     var transformedResult = result.map((row) => row.toColumnMap()).toList();
 

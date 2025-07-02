@@ -17,6 +17,39 @@ class DeckState extends State<Decks> {
   List<String> deckList = [];
   List<List<String>> deckHistory = [];
 
+  // Pagination
+  int numLoaded = 0;
+  final int _pageSize = 30;
+  bool _isLoadingMore = false;
+  bool _hasMore = false;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNextPage();
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200 && !_isLoadingMore && _hasMore) {
+        _loadNextPage();
+      }
+    });
+  }
+
+  Future<void> _loadNextPage() async {
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    var decks = await db.fetchCurrentDecks(deckList.length, _pageSize + 1);
+
+    setState(() {
+      _isLoadingMore = false;
+      _hasMore = decks.length == _pageSize + 1;
+      deckNameIdMap = {...deckNameIdMap, ...decks};
+      deckList = deckList + decks.keys.take(_pageSize).toList();
+    });
+  }
+
   void startPractice(int index) async {
     String deckName = deckList[index];
     String deckId = deckNameIdMap.values.toList()[index];
@@ -99,76 +132,73 @@ class DeckState extends State<Decks> {
         )
       );
     }
-
-    return FutureBuilder<Map<String, String>>(
-      future: db.fetchCurrentDecks(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          deckNameIdMap = snapshot.data!;
-          deckList = deckNameIdMap.keys.toList();
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              title: Container(
-                padding: const EdgeInsets.all(6.0),
-                decoration: BoxDecoration(color: const Color.fromRGBO(222, 160, 189, 1), borderRadius: BorderRadius.circular(8.0)),
-                child: const Text("デッキ"),
-              ),
-              actions: [
-                Container(
-                  margin: const EdgeInsets.only(right: 10.0),
-                  child: TextButton(
-                    onPressed: () async {
-                      var history = await db.getDeckHistory();
-                      setState(() {
-                        deckHistory = history;
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                        side: const BorderSide(color: Colors.white),
-                      ),
-                      foregroundColor: Colors.white, // Text and border color
-                    ),
-                    child: const Text(
-                      '履歴',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          title: Container(
+            padding: const EdgeInsets.all(6.0),
+            decoration: BoxDecoration(color: const Color.fromRGBO(222, 160, 189, 1), borderRadius: BorderRadius.circular(8.0)),
+            child: const Text("デッキ"),
+          ),
+          actions: [
+            Container(
+              margin: const EdgeInsets.only(right: 10.0),
+              child: TextButton(
+                onPressed: () async {
+                  var history = await db.getDeckHistory();
+                  setState(() {
+                    deckHistory = history;
+                  });
+                },
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    side: const BorderSide(color: Colors.white),
                   ),
-                )
-              ],
-            ),
-            body: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, // Number of columns
-                childAspectRatio: 1.3, // Aspect ratio of each grid cell
-              ),
-              itemCount: deckList.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  child: InkWell(
-                    onTap: () async {
-                      startPractice(index);
-                    },
-                    child: Center(
-                      child: Text(deckList[index], style: const TextStyle(fontSize: 16)),
-                    ),
+                  foregroundColor: Colors.white, // Text and border color
+                ),
+                child: const Text(
+                  '履歴',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                   ),
-                );
-              },
+                ),
+              ),
             )
-          );
-        }
-      },
+          ],
+        ),
+        body: deckList.isEmpty ? const Center(child: CircularProgressIndicator()) : GridView.builder(
+          controller: _scrollController,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3, // Number of columns
+            childAspectRatio: 1.3, // Aspect ratio of each grid cell
+          ),
+          itemCount: deckList.length + (_isLoadingMore ? 1 : 0), // Extra slot if loading,
+          itemBuilder: (context, index) {
+            if (index >= deckList.length) {
+              // Bottom loader item
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+            return Card(
+              child: InkWell(
+                onTap: () async {
+                  startPractice(index);
+                },
+                child: Center(
+                  child: Text(deckList[index], style: const TextStyle(fontSize: 16)),
+                ),
+              ),
+            );
+          },
+        )
+
     );
   }
 }
