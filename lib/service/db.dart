@@ -189,8 +189,28 @@ class DatabaseHelper {
 
     List<List<String>> resList = [];
     for (Map<String, dynamic> row in transformedResult) {
-      List<String> innerList = [row["deckname"], formatPrettyDate(row["attempttime"]), row["userscore"].toString()];
+      List<String> innerList = [row["deckname"], formatPrettyDate(row["attempttime"]), double.parse(row["userscore"].toString()).toStringAsFixed(2)];
       resList.add(innerList);
+    }
+
+    return resList;
+  }
+
+  Future<List<String>> fetchDecksFromWord(String word) async {
+    await restartOrOpenConnection();
+    var result = await _connection!.query('''
+        SELECT deckname 
+        FROM kanjideck kd 
+        INNER JOIN deck d 
+          ON kd.deckid = d.deckid 
+        where word = '$word';
+      ''');
+
+    var transformedResult = result.map((row) => row.toColumnMap()).toList();
+
+    List<String> resList = [];
+    for (Map<String, dynamic> row in transformedResult) {
+      resList.add(row["deckname"]);
     }
 
     return resList;

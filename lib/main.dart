@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:goi/pages/decks.dart';
 import 'package:goi/pages/loading.dart';
+import 'package:goi/pages/word_search.dart';
 import 'package:goi/service/kanji.dart';
 import 'package:goi/service/db.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -149,16 +150,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 if (!mounted) return;
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Decks()),
+                  MaterialPageRoute(builder: (context) => const Decks()),
                 );
               }),
             ),
             const SizedBox(height: 80),
             SizedBox(
               width: 200,
-              child: _PinkButton(title: '間違い復習', icon: Icons.flag,
+              child: _PinkButton(title: '言葉検索', icon: Icons.search_sharp,
               onPressed: () async {
-                return;
+                if (!mounted) return;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const WordSearch()),
+                );
               }),
             )
           ]
