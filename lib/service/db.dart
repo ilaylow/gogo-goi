@@ -1,6 +1,6 @@
-import 'dart:math';
 
 import 'package:goi/service/log.dart';
+import 'package:goi/service/util.dart';
 import 'package:postgres/postgres.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -26,27 +26,28 @@ class DatabaseHelper {
     logInfo("Connection established successfully!");
   }
 
-  Future<List<String>> fetchCurrentDecks() async {
+  Future<Map<String,String>> fetchCurrentDecks() async {
     await restartOrOpenConnection();
 
     // Assume page size is 100 for now, implement pagination afterwards...
     var result = await _connection!.query('''
-      SELECT deckName
+      SELECT deckId, deckName
       FROM deck
       ORDER BY deckName DESC
       LIMIT 100
     ''');
     var transformedResult = result.map((row) => row.toColumnMap()).toList();
 
-    List<String> descendingDeckList = [];
+    Map<String, String> descendingDeckMap = {};
     for (Map<String, dynamic> row in transformedResult) {
       String deckName = row["deckname"];
+      String deckId = row["deckid"];
       if (deckName.isNotEmpty) {
-        descendingDeckList.add(deckName);
+        descendingDeckMap[deckName] = deckId;
       }
     }
 
-    return descendingDeckList;
+    return descendingDeckMap;
   }
 
   Future<List<Map<String, dynamic>>> fetchDeckWords(String deckName) async {
@@ -96,8 +97,8 @@ class DatabaseHelper {
     await restartOrOpenConnection();
     try {
       String insertSQL = '''
-      INSERT INTO userInput (word, furigana, userInput, isCorrect, updateTime)
-      VALUES (@word, @furigana, @userInput, @isCorrect, @updateTime);
+      INSERT INTO userInput (word, furigana, userInput, isCorrect, createtime)
+      VALUES (@word, @furigana, @userInput, @isCorrect, @createtime);
     ''';
 
       await _connection?.query(insertSQL, substitutionValues: {
@@ -105,7 +106,7 @@ class DatabaseHelper {
         'furigana': furigana,
         'userInput': userInput,
         'isCorrect': isCorrect,
-        'updateTime': DateTime.now().toString()
+        'createtime': DateTime.now().toUtc().toString()
       });
 
       logInfo("Insert user input into database successfully!");
@@ -123,7 +124,7 @@ class DatabaseHelper {
     var result = await _connection!.query('''
         SELECT * FROM userInput 
         WHERE isCorrect = TRUE 
-        ORDER BY updateTime DESC
+        ORDER BY createtime DESC
         LIMIT $limit;
       ''');
     var transformedResult = result.map((row) => row.toColumnMap()).toList();
@@ -132,11 +133,11 @@ class DatabaseHelper {
     return wordList;
   }
 
-  Future<List<Map<String, dynamic>>> fetchYesterdayIncorrect(DateTime dateToday) async {
+  Future<List<Map<String, dynamic>>> fetchIncorrect(DateTime dateToday) async {
     await restartOrOpenConnection();
 
     var dateTodayStr = "${dateToday.year}-${dateToday.month}-${dateToday.day}";
-    var dateYesterday = dateToday.subtract(const Duration(days: 1));
+    var dateYesterday = dateToday.subtract(const Duration(days: 5));
     var dateYesterdayStr = "${dateYesterday.year}-${dateYesterday.month}-${dateYesterday.day}";
     logInfo(dateTodayStr);
     var result = await _connection!.query('''
@@ -149,6 +150,50 @@ class DatabaseHelper {
     var transformedResult = result.map((row) => row.toColumnMap()).toList();
 
     return transformedResult;
+  }
+
+  Future<bool> insertUserDeckScore(String deckId, double userscore) async {
+    await restartOrOpenConnection();
+    try {
+      String insertSQL = '''
+      INSERT INTO deckscore (deckid, attempttime, userscore)
+      VALUES (@deckid, @attempttime, @userscore);
+    ''';
+
+      await _connection?.query(insertSQL, substitutionValues: {
+        'deckid': deckId,
+        'attempttime': DateTime.now().toUtc().toString(),
+        'userscore': userscore,
+      });
+
+      logInfo("Insert user score into database successfully!");
+      return true;
+    } catch (e) {
+      logInfo(e);
+      logInfo("Error inserting into database...");
+    }
+
+    return false;
+  }
+
+  Future<List<List<String>>> getDeckHistory() async {
+    await restartOrOpenConnection();
+    var result = await _connection!.query('''
+        SELECT d.deckname, ds.attempttime, ds.userscore FROM deckscore ds
+        INNER JOIN deck d ON ds.deckid = d.deckid
+        ORDER BY ds.attempttime DESC
+        LIMIT 20
+      ''');
+
+    var transformedResult = result.map((row) => row.toColumnMap()).toList();
+
+    List<List<String>> resList = [];
+    for (Map<String, dynamic> row in transformedResult) {
+      List<String> innerList = [row["deckname"], formatPrettyDate(row["attempttime"]), row["userscore"].toString()];
+      resList.add(innerList);
+    }
+
+    return resList;
   }
 
   Future<void> restartOrOpenConnection() async {
