@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:goi/pages/decks.dart';
 import 'package:goi/pages/loading.dart';
 import 'package:goi/pages/word_search.dart';
@@ -15,6 +18,7 @@ const pinkAccent = Color(0xFFFF5C8D);
 
 void main() async {
   await dotenv.load(fileName: ".env");
+  loadWords();
   runApp(const MyApp());
 }
 
@@ -224,4 +228,38 @@ class _PinkButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class LocalDict {
+  static final LocalDict _instance = LocalDict._internal();
+
+  factory LocalDict() {
+    return _instance;
+  }
+
+  LocalDict._internal();
+
+  List<List<String>> _words = [];
+
+  void setWords(List<List<String>> words) {
+    _words = words;
+  }
+
+  List<List<String>> get words => _words;
+}
+
+Future<void> loadWords() async {
+  final String wordsJsonStr = await rootBundle.loadString('assets/jitendex-lite.json');
+  final Map<String, dynamic> allWords = json.decode(wordsJsonStr);
+
+  List<List<String>> _words = [];
+  for (var wordEntry in allWords.entries) {
+    String word = wordEntry.key;
+    String reading = wordEntry.value["pron"];
+    String meanings = wordEntry.value["meanings"].toString();
+
+    _words.add([word, reading, meanings]);
+  }
+
+  LocalDict().setWords(_words);
 }

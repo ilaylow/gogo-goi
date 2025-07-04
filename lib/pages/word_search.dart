@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:goi/main.dart';
 import 'package:goi/pages/word.dart';
 import 'package:goi/service/db.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -19,47 +20,6 @@ class WordSearchState extends State<WordSearch> {
   List<List<String>> _filteredOptions = [];
   List<List<String>> _allOptions = [];
 
-  Future<void> loadWords() async {
-    final String n1Str = await rootBundle.loadString('assets/jlpt-n1-words.json');
-    final Map<String, dynamic> n1Data = json.decode(n1Str);
-
-    final String n2Str = await rootBundle.loadString('assets/jlpt-n2-words.json');
-    final Map<String, dynamic> n2Data = json.decode(n2Str);
-
-    final String n3Str = await rootBundle.loadString('assets/jlpt-n3-words.json');
-    final Map<String, dynamic> n3Data = json.decode(n3Str);
-
-    final String n4Str = await rootBundle.loadString('assets/jlpt-n4-words.json');
-    final Map<String, dynamic> n4Data = json.decode(n4Str);
-
-    final String n5Str = await rootBundle.loadString('assets/jlpt-n5-words.json');
-    final Map<String, dynamic> n5Data = json.decode(n5Str);
-
-    List<dynamic> allWords = n1Data["items"] + n2Data["items"] + n3Data["items"] + n4Data["items"] + n5Data["items"];
-    List<List<String>> _words = [];
-    for (dynamic wordEntry in allWords) {
-      final Map<String, dynamic> wordMap = wordEntry as Map<String, dynamic>;
-      final Map<String, dynamic> wordData = wordMap["data"];
-
-      String word;
-      if (wordData.containsKey("w")) {
-        word = wordData["w"];
-      } else {
-        word = wordData["r"];
-      }
-
-      // "w", "r", "def"
-      String reading = wordData["r"];
-      String definition = wordData["def"].toString();
-
-      _words.add([word, reading, definition]);
-    }
-
-    setState(() {
-      _allOptions = _words;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -75,7 +35,9 @@ class WordSearchState extends State<WordSearch> {
       }
     });
 
-    loadWords();
+    setState(() {
+      _allOptions = LocalDict().words;
+    });
   }
 
   void _onSearchChanged() {
