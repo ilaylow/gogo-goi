@@ -1,6 +1,7 @@
 # Gogo-語彙
 
-(Fun Fact: I used this app to pass the Japanese Language Proficiency Test (日本語能力試験) at the N2 Level!)
+**(Fun Fact: I used this app to pass the Japanese Language Proficiency Test (日本語能力試験) at the N2 Level!)**
+
 A new Flutter project created to play around with flutter and create a useful app for Kanji vocabulary for my own study.
 
 ## Existing Design
