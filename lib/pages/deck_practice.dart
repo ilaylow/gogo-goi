@@ -34,7 +34,6 @@ class DeckPracticeState extends State<DeckPractice> {
         List<dynamic> meaningsList = (commaMeaningsList.length > semiColonMeaningsList.length) ? commaMeaningsList : semiColonMeaningsList;
 
         String displayMeanings = meaningsList[0];
-        print(meaningsList);
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           elevation: 3,
