@@ -34,32 +34,49 @@ class DeckPracticeState extends State<DeckPractice> {
         List<dynamic> meaningsList = (commaMeaningsList.length > semiColonMeaningsList.length) ? commaMeaningsList : semiColonMeaningsList;
 
         String displayMeanings = meaningsList[0];
+        print(meaningsList);
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           elevation: 3,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(12),
-            leading: CircleAvatar(
-              backgroundColor: const Color(0xFFF63F74),
-              child: Text(
-                wordData['word'][0],
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-            title: Text(
-              wordData['word'],
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
-            subtitle: Text(
-              wordData['furigana'],
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            trailing: Text(
-              displayMeanings,
-              style: const TextStyle(fontSize: 10, color: Colors.grey),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  backgroundColor: const Color(0xFFF63F74),
+                  child: Text(
+                    wordData['word'][0],
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        wordData['word'],
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      Text(
+                        wordData['furigana'],
+                        style: const TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        displayMeanings,
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         );
