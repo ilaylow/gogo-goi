@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -30,10 +28,10 @@ class DeckPracticeState extends State<DeckPractice> {
       itemBuilder: (context, index) {
         final wordData = widget.words[index];
         List<dynamic> commaMeaningsList = wordData['meaning'].split(',').map((word) => word.trim()).toList();
-        List<dynamic> semiColonMeaningsList = wordData['meaning'].split(';').map((word) => word.trim()).toList();
-        List<dynamic> meaningsList = (commaMeaningsList.length > semiColonMeaningsList.length) ? commaMeaningsList : semiColonMeaningsList;
+        //List<dynamic> semiColonMeaningsList = wordData['meaning'].split(';').map((word) => word.trim()).toList();
+        //List<dynamic> meaningsList = (commaMeaningsList.length > semiColonMeaningsList.length) ? commaMeaningsList : semiColonMeaningsList;
 
-        String displayMeanings = meaningsList[0];
+        String displayMeanings = wordData['meaning'];
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           elevation: 3,
