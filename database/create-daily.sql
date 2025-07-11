@@ -2,7 +2,8 @@
 DELETE FROM public.dailykanji WHERE 1=1;
 
 -- Insert in 5 words that the user got wrong recently (remove set of words they got right recently)
-SELECT word, furigana, meaning
+INSERT INTO dailykanji(word)
+SELECT word
 FROM (
   SELECT DISTINCT ON (word)
     k.word,
@@ -25,7 +26,8 @@ OFFSET 100
 LIMIT 5;
 
 -- Insert in 5 words that the user got right awhile ago
-SELECT word, furigana, meaning
+INSERT INTO dailykanji(word)
+SELECT word
 FROM (
   SELECT DISTINCT ON (word)
     k.word,
@@ -42,7 +44,8 @@ OFFSET 100
 LIMIT 5;
 
 -- Insert in 5 words that the user got wrong awhile ago
-SELECT word, furigana, meaning
+INSERT INTO dailykanji(word)
+SELECT word
 FROM (
   SELECT DISTINCT ON (word)
     k.word,
