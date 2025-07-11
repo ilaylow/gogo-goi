@@ -16,10 +16,10 @@ jobs:
       - name: Install CockroachDB CLI
         run: |
           curl https://binaries.cockroachdb.com/cockroach-sql-v25.2.2.linux-amd64.tgz | tar -xz
-          sudo cp -i cockroach-sql-v25.2.2.linux-amd64/cockroach-sql /usr/local/bin/
+          sudo cp cockroach-sql-v25.2.2.linux-amd64/cockroach-sql /usr/local/bin/
 
       - name: Run cleanup query
         env:
           COCKROACH_URL: ${{ secrets.COCKROACH_URL }}
         run: |
-          cockroach sql --url "$COCKROACH_URL" --file=database/create-daily.sql
+          cockroach-sql --url "$COCKROACH_URL" --file=database/create-daily.sql
