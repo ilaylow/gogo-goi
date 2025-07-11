@@ -17,12 +17,11 @@ FROM (
      SELECT word FROM public.userinput
      WHERE iscorrect = true
      ORDER BY createtime DESC
-     LIMIT 100
+     LIMIT 300
   )
   ORDER BY word, ui.createtime DESC
 ) sub
 ORDER BY createtime DESC
-OFFSET 100
 LIMIT 5;
 
 -- Insert in 5 words that the user got right awhile ago

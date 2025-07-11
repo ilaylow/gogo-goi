@@ -232,18 +232,28 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> fetchRecentIncorrectWords() async {
     await restartOrOpenConnection();
 
-    var result = await _connection!.query('''
-      SELECT k.word, k.furigana, k.meaning
+    var result = await _connection!.query('''  
+    SELECT word, furigana, meaning
+    FROM (
+      SELECT DISTINCT ON (word)
+        k.word,
+        k.furigana,
+        k.meaning,
+        ui.createtime
       FROM userinput ui
-          INNER JOIN kanji k ON ui.word = k.word
-      WHERE ui.iscorrect = false AND k.word NOT IN (
-          SELECT word FROM public.userinput
-          WHERE iscorrect = true
-          ORDER BY createtime DESC
-          LIMIT 100
+      INNER JOIN kanji k ON ui.word = k.word
+      WHERE ui.iscorrect = false
+      AND k.word NOT IN (
+         SELECT word FROM public.userinput
+         WHERE iscorrect = true
+         ORDER BY createtime DESC
+         LIMIT 300
       )
-      ORDER BY ui.createtime DESC
-      LIMIT 15
+      ORDER BY word, ui.createtime DESC
+    ) sub
+    ORDER BY createtime DESC
+    OFFSET 100
+    LIMIT 15;
     ''');
 
     var transformedResult = result.map((row) => row.toColumnMap()).toList();
