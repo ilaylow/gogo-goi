@@ -2,7 +2,7 @@ name: Daily Kanji Cron
 
 on:
   schedule:
-    - cron: '0 * 5 * *' # Every day at 2PM UTC - Equivalent to AEST
+    - cron: '5 * * * *' # Every day at 2PM UTC - Equivalent to AEST
 
 jobs:
   run-query:
