@@ -216,6 +216,35 @@ class DatabaseHelper {
     return resList;
   }
 
+  Future<List<Map<String, dynamic>>> fetchDailyWords() async {
+    await restartOrOpenConnection();
+
+    var result = await _connection!.query('''
+      SELECT dk.word, k.furigana, k.meaning
+      FROM dailykanji dk
+        INNER JOIN kanji k ON dk.word = k.word
+    ''');
+
+    var transformedResult = result.map((row) => row.toColumnMap()).toList();
+    return transformedResult;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchRecentIncorrectWords() async {
+    await restartOrOpenConnection();
+
+    var result = await _connection!.query('''
+      SELECT k.word, k.furigana, k.meaning
+      FROM userinput ui
+        INNER JOIN kanji k ON ui.word = k.word
+       WHERE ui.iscorrect = false
+       ORDER BY ui.createtime DESC
+       LIMIT 15
+    ''');
+
+    var transformedResult = result.map((row) => row.toColumnMap()).toList();
+    return transformedResult;
+  }
+
   Future<void> restartOrOpenConnection() async {
     if (_connection == null || _connection!.isClosed) {
       _connection = PostgreSQLConnection(

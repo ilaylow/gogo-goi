@@ -18,7 +18,7 @@ jobs:
           curl https://binaries.cockroachdb.com/cockroach-sql-v25.2.2.linux-amd64.tgz | tar -xz
           sudo cp cockroach-sql-v25.2.2.linux-amd64/cockroach-sql /usr/local/bin/
 
-      - name: Run cleanup query
+      - name: Run Query
         env:
           COCKROACH_URL: ${{ secrets.COCKROACH_URL }}
         run: |

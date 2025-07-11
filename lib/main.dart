@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:goi/pages/deck_practice.dart';
 import 'package:goi/pages/decks.dart';
 import 'package:goi/pages/loading.dart';
 import 'package:goi/pages/word_search.dart';
@@ -9,8 +10,11 @@ import 'package:goi/service/kanji.dart';
 import 'package:goi/service/db.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:uuid/uuid.dart';
 
 import 'models/word.dart';
+
+const uuid = Uuid();
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -134,9 +138,37 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            const SizedBox(height: 80),
+            const SizedBox(height: 70),
             SizedBox(
-              width: 200, // set your desired width
+              width: 230, // set your desired width
+              child: _PinkButton(title: '日替わりデッキ', icon: Icons.calendar_month,
+                  onPressed: () async {
+                    if (!mounted) return;
+                    List<Map<String, dynamic>> words = await _dbHelper.fetchDailyWords();
+                    words.shuffle();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DeckPractice(words: words, deckName: "日替わりデッキ", deckId: uuid.v4().toString())),
+                    );
+                  }),
+            ),
+            const SizedBox(height: 30),
+            SizedBox(
+              width: 230, // set your desired width
+              child: _PinkButton(title: '間違い復習', icon: Icons.close,
+                  onPressed: () async {
+                    if (!mounted) return;
+                    List<Map<String, dynamic>> words = await _dbHelper.fetchRecentIncorrectWords();
+                    words.shuffle();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DeckPractice(words: words, deckName: "間違った言葉", deckId: uuid.v4().toString())),
+                    );
+                  }),
+            ),
+            const SizedBox(height: 30),
+            SizedBox(
+              width: 230, // set your desired width
               child: _PinkButton(title: '漢字練習', icon: Icons.star,
               onPressed: () async {
                 if (!mounted) return;
@@ -146,9 +178,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               }),
             ),
-            const SizedBox(height: 80),
+            const SizedBox(height: 30),
             SizedBox(
-              width: 200,
+              width: 230,
               child: _PinkButton(title: '言葉デッキ', icon: Icons.receipt_long,
               onPressed: () async {
                 if (!mounted) return;
@@ -158,9 +190,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               }),
             ),
-            const SizedBox(height: 80),
+            const SizedBox(height: 30),
             SizedBox(
-              width: 200,
+              width: 230,
               child: _PinkButton(title: '言葉検索', icon: Icons.search_sharp,
               onPressed: () async {
                 if (!mounted) return;
