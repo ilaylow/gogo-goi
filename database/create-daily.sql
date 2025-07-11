@@ -12,7 +12,7 @@ FROM (
   FROM userinput ui
   INNER JOIN kanji k ON ui.word = k.word
   WHERE ui.iscorrect = false
-  AND word NOT IN (
+  AND k.word NOT IN (
      SELECT word FROM public.userinput
      WHERE iscorrect = true
      ORDER BY createtime DESC
