@@ -1,0 +1,24 @@
+name: Daily Kanji Cron
+
+on:
+  schedule:
+    - cron: '0 * 5 * *' # Every day at 2PM UTC - Equivalent to AEST
+
+jobs:
+  run-query:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install CockroachDB CLI
+        run: |
+          curl https://binaries.cockroachdb.com/cockroach-sql-v25.2.2.linux-amd64.tgz | tar -xz
+          sudo cp -i cockroach-sql-v25.2.2.linux-amd64 /usr/local/bin/
+
+      - name: Run cleanup query
+        env:
+          COCKROACH_URL: ${{ secrets.COCKROACH_URL }}
+        run: |
+          cockroach sql --url "$COCKROACH_URL" --file=database/create-daily.sql
