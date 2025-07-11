@@ -1,10 +1,15 @@
 -- First clear the table
 DELETE FROM public.dailykanji WHERE 1=1;
 
--- Insert in 5 words that the user got wrong recently
+-- Insert in 5 words that the user got wrong recently (remove set of words they got right recently)
 INSERT INTO public.dailykanji (word)
 SELECT word FROM public.userinput
-WHERE iscorrect=false
+WHERE iscorrect=false AND word NOT IN (
+    SELECT word FROM public.userinput
+    WHERE iscorrect = true
+    ORDER BY createtime DESC
+    LIMIT 100
+)
 ORDER BY createtime DESC
 LIMIT 5;
 

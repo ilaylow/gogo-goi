@@ -235,10 +235,15 @@ class DatabaseHelper {
     var result = await _connection!.query('''
       SELECT k.word, k.furigana, k.meaning
       FROM userinput ui
-        INNER JOIN kanji k ON ui.word = k.word
-       WHERE ui.iscorrect = false
-       ORDER BY ui.createtime DESC
-       LIMIT 15
+          INNER JOIN kanji k ON ui.word = k.word
+      WHERE ui.iscorrect = false AND k.word NOT IN (
+          SELECT word FROM public.userinput
+          WHERE iscorrect = true
+          ORDER BY createtime DESC
+          LIMIT 100
+      )
+      ORDER BY ui.createtime DESC
+      LIMIT 15
     ''');
 
     var transformedResult = result.map((row) => row.toColumnMap()).toList();
