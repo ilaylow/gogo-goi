@@ -1,4 +1,7 @@
 
+import 'dart:ffi';
+
+import 'package:goi/main.dart';
 import 'package:goi/service/log.dart';
 import 'package:goi/service/util.dart';
 import 'package:postgres/postgres.dart';
@@ -258,6 +261,60 @@ class DatabaseHelper {
 
     var transformedResult = result.map((row) => row.toColumnMap()).toList();
     return transformedResult;
+  }
+
+  Future<String> createTodayDeck() async {
+    await restartOrOpenConnection();
+
+    var deckId = uuid.v4().toString();
+    var todayDate = todayString();
+    try {
+      var result = await _connection!.query('''
+        SELECT deckid FROM deck where deckname='$todayDate';
+      ''');
+
+      if (result.isNotEmpty) {
+        var transformedResult = result.map((row) => row.toColumnMap()).toList();
+        return transformedResult[0]["deckid"];
+      }
+
+      await _connection!.query('''
+        INSERT INTO deck (deckid, deckname) VALUES ('$deckId', '$todayDate') ON CONFLICT(deckid) DO NOTHING;
+      ''');
+
+      logInfo("Created daily deck for today successfully!");
+
+      return deckId;
+    } catch (e) {
+      logInfo("Error creating deck for today...");
+      logInfo(e);
+    }
+
+    return "";
+  }
+
+
+  Future<bool> uploadWordIntoDeck(String word, String furigana, String meaning, String deckId) async {
+    await restartOrOpenConnection();
+
+    var currentTimestamp = DateTime.now();
+    try {
+      await _connection!.query('''
+        INSERT INTO kanji (word, furigana, meaning, updatetime) VALUES ('$word', '$furigana', '$meaning', '$currentTimestamp') ON CONFLICT(word) DO NOTHING;
+      ''');
+
+      await _connection!.query('''
+        INSERT INTO kanjideck (deckid, word) VALUES ('$deckId', '$word') ON CONFLICT(deckid, word) DO NOTHING;
+      ''');
+
+      logInfo("Insert kanji and kanjideck association successfully!");
+      return true;
+    } catch (e) {
+      logInfo("Error inserting word into deck...");
+      logInfo(e);
+    }
+
+    return false;
   }
 
   Future<void> restartOrOpenConnection() async {

@@ -12,13 +12,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:uuid/uuid.dart';
 
+import 'color.dart';
 import 'models/word.dart';
+import 'components/button.dart';
 
 const uuid = Uuid();
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
-const pinkAccent = Color(0xFFFF5C8D);
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -141,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 70),
             SizedBox(
               width: 230, // set your desired width
-              child: _PinkButton(title: '日替わりデッキ', icon: Icons.calendar_month,
+              child: PinkButton(title: '日替わりデッキ', icon: Icons.calendar_month,
                   onPressed: () async {
                     if (!mounted) return;
                     List<Map<String, dynamic>> words = await _dbHelper.fetchDailyWords();
@@ -155,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 30),
             SizedBox(
               width: 230, // set your desired width
-              child: _PinkButton(title: '間違い復習', icon: Icons.close,
+              child: PinkButton(title: '間違い復習', icon: Icons.close,
                   onPressed: () async {
                     if (!mounted) return;
                     List<Map<String, dynamic>> words = await _dbHelper.fetchRecentIncorrectWords();
@@ -169,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 30),
             SizedBox(
               width: 230, // set your desired width
-              child: _PinkButton(title: '漢字練習', icon: Icons.star,
+              child: PinkButton(title: '漢字練習', icon: Icons.star,
               onPressed: () async {
                 if (!mounted) return;
                 Navigator.push(
@@ -181,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 30),
             SizedBox(
               width: 230,
-              child: _PinkButton(title: '言葉デッキ', icon: Icons.receipt_long,
+              child: PinkButton(title: '言葉デッキ', icon: Icons.receipt_long,
               onPressed: () async {
                 if (!mounted) return;
                 Navigator.push(
@@ -193,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 30),
             SizedBox(
               width: 230,
-              child: _PinkButton(title: '言葉検索', icon: Icons.search_sharp,
+              child: PinkButton(title: '言葉検索', icon: Icons.search_sharp,
               onPressed: () async {
                 if (!mounted) return;
                 Navigator.push(
@@ -224,40 +224,6 @@ class _MyHomePageState extends State<MyHomePage> {
       //     ],
       //   ),
       // ),
-    );
-  }
-}
-
-class _PinkButton extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  const _PinkButton({
-    required this.title,
-    required this.icon,
-    required this.onPressed
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    const buttonColor = Color(0xFF3E3D3D);
-
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, color: pinkAccent, size: 22),
-      label: Text(title),
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-        backgroundColor: buttonColor,
-        foregroundColor: Colors.white,
-        elevation: 6,
-        shadowColor: pinkAccent.withOpacity(0.4),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-      ),
     );
   }
 }
