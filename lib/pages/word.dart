@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:goi/service/db.dart';
 
+import '../components/button.dart';
+
 
 class Word extends StatefulWidget {
   final String word;
@@ -19,6 +21,8 @@ class WordState extends State<Word> {
   DatabaseHelper db = DatabaseHelper();
   List<String> foundDecks = [];
   bool isLoading = true;
+  bool isInserting = false;
+  bool hasUploaded = false;
 
   @override
   void initState() {
@@ -89,6 +93,37 @@ class WordState extends State<Word> {
                       ),
                     ]
                 )
+              ),
+              Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        PinkButton(title: '現デッキにアップ', icon: Icons.upload,
+                            onPressed: () async {
+                              if (!mounted) return;
+                              setState(() {
+                                hasUploaded = false;
+                                isInserting = true;
+                              });
+                              String deckId = await db.createTodayDeck();
+                              if (deckId != "") {
+                                await db.uploadWordIntoDeck(widget.word, widget.reading, widget.meaning, deckId);
+                                setState(() {
+                                  isInserting = false;
+                                  hasUploaded = true;
+                                });
+                              }
+                            }),
+                        const SizedBox(width: 10),
+                        if (isInserting) const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(),
+                        ),
+                        if (hasUploaded) const Icon(Icons.check, color: Colors.green)
+                      ]
+                  )
               ),
             ]
           ),
