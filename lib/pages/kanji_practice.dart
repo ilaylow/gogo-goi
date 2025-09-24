@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:goi/pages/loading.dart';
+import 'package:goi/service/util.dart';
 
+import '../main.dart';
 import '../service/db.dart';
 
 class KanjiPractice extends StatefulWidget {
@@ -26,14 +28,18 @@ class KanjiPracticeState extends State<KanjiPractice> {
   bool displayNext = false;
   bool displayRefresh = false;
   final DatabaseHelper db = DatabaseHelper();
-
-  List<String>? _options;
-
+  final _controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     //_correctOptionIndex = random.nextInt(3);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   // List<String> generateOptions() {
@@ -151,7 +157,7 @@ class KanjiPracticeState extends State<KanjiPractice> {
               const SizedBox(height: 10),
               Padding(padding: const EdgeInsets.all(20.0),
                   child: displayMeaning == true ? Text(
-                    widget.kanjiRow["meaning"],
+                    removeParentheses(widget.kanjiRow["meaning"].toString()),
                     style: const TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
                   ) : null),
               const Padding(
@@ -162,10 +168,31 @@ class KanjiPracticeState extends State<KanjiPractice> {
               ),
               Padding(padding: const EdgeInsets.symmetric(horizontal: 50.0),
                   child: TextField(
+                    controller: _controller,
                     readOnly: _isCorrect != null,
                     onChanged: (text) {
+                      if (_controller.value.composing.isValid && !_controller.value.composing.isCollapsed) {
+                        return;
+                      }
+
+                      final inputText = text.toLowerCase();
+                      final offset = _controller.selection.baseOffset;
+
+                      String convertedText;
+                      if ((offset == 1 && _controller.text[offset - 1] == 'n') || (offset > 1 &&
+                          _controller.text[offset - 1] == 'n' &&
+                          _controller.text[offset - 2] != 'n')) {
+                        convertedText = inputText;
+                      } else {
+                        convertedText = kanaKit.toHiragana(_controller.text
+                            .replaceAll(RegExp('nn', caseSensitive: false), 'n'));
+                      }
+                      _controller.value = TextEditingValue(
+                        text: convertedText,
+                        selection: TextSelection.collapsed(offset: convertedText.length),
+                      );
                       setState(() {
-                        _inputValue = text;
+                        _inputValue = convertedText;
                       });
                     },
                     decoration: const InputDecoration(

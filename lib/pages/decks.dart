@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:goi/pages/deck_practice.dart';
 import 'package:goi/service/db.dart';
+import 'package:goi/service/log.dart';
 
 class Decks extends StatefulWidget {
   const Decks({super.key});
@@ -41,7 +42,7 @@ class DeckState extends State<Decks> {
     });
 
     var decks = await db.fetchCurrentDecks(deckList.length, _pageSize + 1);
-
+    logInfo(decks.length);
     setState(() {
       _isLoadingMore = false;
       _hasMore = decks.length == _pageSize + 1;

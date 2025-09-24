@@ -29,3 +29,12 @@ String todayString() {
   final day = now.day.toString().padLeft(2, '0');
   return '$year-$month-$day';
 }
+
+String removeParentheses(String input) {
+  int len = input.length;
+  if (input[0] == "[" && input[len - 1] == "]") {
+    return input.substring(1, len - 1);
+  }
+
+  return input;
+}

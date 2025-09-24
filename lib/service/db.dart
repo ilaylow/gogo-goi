@@ -40,7 +40,6 @@ class DatabaseHelper {
       LIMIT $pageSize OFFSET $offset
     ''');
     var transformedResult = result.map((row) => row.toColumnMap()).toList();
-
     Map<String, String> descendingDeckMap = {};
     for (Map<String, dynamic> row in transformedResult) {
       String deckName = row["deckname"];

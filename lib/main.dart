@@ -10,6 +10,7 @@ import 'package:goi/service/kanji.dart';
 import 'package:goi/service/db.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:kana_kit/kana_kit.dart';
 import 'package:uuid/uuid.dart';
 
 import 'color.dart';
@@ -17,6 +18,8 @@ import 'models/word.dart';
 import 'components/button.dart';
 
 const uuid = Uuid();
+
+const kanaKit = KanaKit();
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:goi/main.dart';
 import 'package:goi/pages/word.dart';
 import 'package:goi/service/db.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:goi/service/log.dart';
 
 class WordSearch extends StatefulWidget {
   const WordSearch({super.key});
@@ -41,15 +43,44 @@ class WordSearchState extends State<WordSearch> {
   }
 
   void _onSearchChanged() {
-    final input = _controller.text.toLowerCase();
+    final text = _controller.text.toLowerCase();
+    final offset = _controller.selection.baseOffset;
+
+    String convertedText;
+
+    if (_controller.value.composing.isValid && !_controller.value.composing.isCollapsed) {
+      return;
+    }
+    // If newest entry is n, and there is no n before me. Or I'm at the start of a sentence.
+    // Don't do anything
+    if ((offset == 1 && _controller.text[offset - 1] == 'n') || (offset > 1 &&
+        _controller.text[offset - 1] == 'n' &&
+        _controller.text[offset - 2] != 'n')) {
+        convertedText = text;
+    } else {
+      convertedText = kanaKit.toHiragana(_controller.text
+          .replaceAll(RegExp('nn', caseSensitive: false), 'n'));
+    }
+
+    final input = convertedText;
+    _controller.value = TextEditingValue(
+      text: convertedText,
+      selection: TextSelection.collapsed(offset: convertedText.length),
+    );
     setState(() {
       if (input.isEmpty) {
         _filteredOptions = [];
       } else {
         _filteredOptions = _allOptions
             .where((option) => option[0].startsWith(input) || option[1].startsWith(input))
-            .take(3)
-            .toList();
+            .toList()
+           ;
+
+        _filteredOptions.sort(
+                (a, b) => a[0].length.compareTo(b[0].length)
+        );
+
+        _filteredOptions = _filteredOptions.sublist(0, min(3, _filteredOptions.length));
       }
     });
   }
@@ -69,7 +100,7 @@ class WordSearchState extends State<WordSearch> {
     if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Word(word: option[0], reading: option[1], meaning: option[2])),
+      MaterialPageRoute(builder: (context) => Word(word: option[0], reading: option[1].replaceAll('[', '').replaceAll(']', ''), meaning: option[2])),
     );
   }
 

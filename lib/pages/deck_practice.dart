@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:goi/pages/kanji_practice.dart';
 
 import 'package:goi/service/db.dart';
+import 'package:goi/service/util.dart';
 
 class DeckPractice extends StatefulWidget {
   final List<Map<String, dynamic>> words;
@@ -27,11 +28,7 @@ class DeckPracticeState extends State<DeckPractice> {
       itemCount: widget.words.length,
       itemBuilder: (context, index) {
         final wordData = widget.words[index];
-        List<dynamic> commaMeaningsList = wordData['meaning'].split(',').map((word) => word.trim()).toList();
-        //List<dynamic> semiColonMeaningsList = wordData['meaning'].split(';').map((word) => word.trim()).toList();
-        //List<dynamic> meaningsList = (commaMeaningsList.length > semiColonMeaningsList.length) ? commaMeaningsList : semiColonMeaningsList;
-
-        String displayMeanings = wordData['meaning'];
+        String displayMeanings = removeParentheses(wordData['meaning'].toString());
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           elevation: 3,
